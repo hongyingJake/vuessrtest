@@ -45,12 +45,8 @@
         //异步加载数据，服务端渲染
         asyncData ({store,route}){
             let id=route.params.id;
-            store.dispatch('item_data',id);
+            return store.dispatch('item_data',id);
          },
-        // created (){
-        //     let id=this.$route.params.id;
-        //     this.$store.dispatch('item_data',id);
-        // },
         computed:{
             personModel(){
                 //2:这种方式并没有进行预渲染(需要修改 $store的值)

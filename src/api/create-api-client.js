@@ -13,6 +13,7 @@ export function createAPI ({ config, version }) {
         api = process.__API__ ={
             getLst (){
                 let path=config.databaseURL+"person/getList"
+                Vue.axios.ge
                 return Vue.axios.get(path);
             },
             getItemById (id) {

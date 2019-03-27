@@ -14,7 +14,7 @@ export default {
   },
     //设置当前人
     item_data: (context,id)=>{
-        personById(id)
+        return personById(id)
             .then(data=>{
                 context.commit('set_CurrentPerson',data);
             })

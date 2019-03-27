@@ -30,44 +30,48 @@ const data=[
     }
 ];
 //1：模拟异步数据
-export function personById(id) {
-    let pro=new Promise(((resolve, reject) => {
-        personlst()
-            .then(dataLst=>{
-            let index=dataLst.findIndex((person)=>person.id==id);
-            resolve(dataLst[index])
-        })
-            .catch(err=>{
-                reject(err)
-            })
-    }))
-    return pro;
-}
-
-export function personlst () {
-    console.log('从服务端获取数据...')
-  let pro=new Promise((resolve, reject)=>{
-        resolve(data);
-  });
-  return pro;
-}
-
-//2:请求远程数据
 // export function personById(id) {
 //     let pro=new Promise(((resolve, reject) => {
-//         api.getItemById(id).then(response=>{
-//             resolve(response.data)
+//         personlst()
+//             .then(dataLst=>{
+//             let index=dataLst.findIndex((person)=>person.id==id);
+//             resolve(dataLst[index])
 //         })
+//             .catch(err=>{
+//                 reject(err)
+//             })
 //     }))
 //     return pro;
 // }
 //
 // export function personlst () {
 //     console.log('从服务端获取数据...')
-//     let pro=new Promise((resolve, reject)=>{
-//         api.getLst().then((response)=>{
-//             resolve(response.data);
-//         })
-//     });
-//     return pro;
+//   let pro=new Promise((resolve, reject)=>{
+//       // setTimeout(()=>{
+//       //     resolve(data);
+//       // },500)
+//       resolve(data);
+//   });
+//   return pro;
 // }
+
+//2:请求远程数据
+export function personById(id) {
+
+    let pro=new Promise(((resolve, reject) => {
+        api.getItemById(id).then(response=>{
+            resolve(response.data)
+        })
+    }))
+    return pro;
+}
+
+export function  personlst () {
+    // console.log('从服务端获取列表数据...')
+    let pro=new Promise((resolve, reject)=>{
+        api.getLst().then((response)=>{
+            resolve(response.data);
+        })
+    })
+    return pro;
+}

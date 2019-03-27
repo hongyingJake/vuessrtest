@@ -48,9 +48,12 @@
         //注意这个方法是直接写在组件中；服务端和客户端共只执行一次，服务端会把数据嵌入到页面 window.__INITIAL_STATE__ 对象中
         asyncData ({store}) {
             //获取列表数据
-            store.dispatch('list_data').then(()=>{
-                console.log('加载列表成功...')
-            })
+            // store.dispatch('list_data').then(()=>{
+            //     console.log('加载列表成功...')
+            // })
+            // prefetch需要返回 一个Promise，服务端渲染时会等待所有的prefetch加载之后再往后执行
+            //如果返回的不是Promise，会出现异步远程请求之前服务端就渲染完了，导致store.state没有写入数据
+            return store.dispatch('list_data')
         },
         mounted (){
             // console.log('组件中定义的mounted...')

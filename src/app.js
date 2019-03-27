@@ -34,7 +34,7 @@ export function createApp () {
     router,
     store,
     render: h => h(App)
-  })
+})
 
   // expose the app, the router and the store.
   // note we are not mounting the app here, since bootstrapping will be
