@@ -6,13 +6,22 @@ import LRU from 'lru-cache'
 
 Vue.use(VueAxios, axios)
 
-export function createAPI ({ config, version }) {
+const isProd = process.env.NODE_ENV === 'production'
+//api结果缓存
+const apiCache=LRU({
+    max:1000,
+    maxAge:1000*60*15
+})
+
+export default function createServerAPI ({ config, version }) {
   let api
   if (process.__API__) {
     api = process.__API__
   } else {
     //对生产环境使用缓存
     api = process.__API__ ={
+        apiResultCache:apiCache,
+        isProd:isProd,
         getLst (){
             let path=config.databaseURL+"person/getList"
             return Vue.axios.get(path);
@@ -20,6 +29,10 @@ export function createAPI ({ config, version }) {
         getItemById (id) {
             let path=config.databaseURL+"person/getPersonById?id="+id
             return Vue.axios.get(path);
+        },
+        getPostLst(){
+            let path=config.databaseURL+"person/getList"
+            return Vue.axios.post(path,{});
         }
     }
   }

@@ -1,5 +1,6 @@
-'引入异步请求服务端配置，这里完成远程请求的业务逻辑；这里的方法调用应该是actions对远程方法的调用；'
-import { createAPI } from 'create-api'
+'引入异步请求服务端配置，这里完成远程请求的业务逻辑；这里的方法调用应该是actions对远程方法的调用；' +
+'请求的是client.js或者server.js由 process.env.NODE_ENV 决定；'
+import  createAPI  from 'create-api'
 
 const logRequests = !!process.env.DEBUG_API
 
@@ -45,11 +46,8 @@ const data=[
 // }
 //
 // export function personlst () {
-//     console.log('从服务端获取数据...')
+//     // console.log('从服务端获取数据...')
 //   let pro=new Promise((resolve, reject)=>{
-//       // setTimeout(()=>{
-//       //     resolve(data);
-//       // },500)
 //       resolve(data);
 //   });
 //   return pro;
@@ -59,9 +57,19 @@ const data=[
 export function personById(id) {
 
     let pro=new Promise(((resolve, reject) => {
-        api.getItemById(id).then(response=>{
-            resolve(response.data)
-        })
+        let  result = api.apiResultCache.get('personById'+id)
+        if(result){
+            resolve(result)
+        }
+        else{
+            api.getItemById(id).then(response=>{
+                if(api.isProd){
+                    api.apiResultCache.set('personById'+id,response.data)
+                }
+                resolve(response.data)
+            })
+        }
+
     }))
     return pro;
 }
@@ -69,9 +77,18 @@ export function personById(id) {
 export function  personlst () {
     // console.log('从服务端获取列表数据...')
     let pro=new Promise((resolve, reject)=>{
-        api.getLst().then((response)=>{
-            resolve(response.data);
-        })
+        let result=api.apiResultCache.get('personlst');
+        if(result){
+            resolve(result);
+        }else{
+            api.getLst().then((response)=>{
+                if(api.isProd){
+                    api.apiResultCache.set('personlst',response.data);
+                }
+                resolve(response.data);
+            })
+        }
+
     })
     return pro;
 }

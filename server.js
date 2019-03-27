@@ -60,7 +60,7 @@ if (isProd) {
         }
     )
 }
-
+//设置静态文件缓存（减少磁盘读写）
 const serve = (path, cache) => express.static(resolve(path), {
     maxAge: cache && isProd ? 1000 * 60 * 60 * 24 * 30 : 0
 })
@@ -109,19 +109,37 @@ function render (req, res) {
         }
     }
 
+    //向模板中传值
     const context = {
         title: 'Vue HN 2.0', // default title
         url: req.url
     }
-    renderer.renderToString(context, (err, html) => {
-        if (err) {
-            return handleError(err)
-        }
-        res.send(html)
+    //1:renderer.renderToString
+    // renderer.renderToString(context, (err, html) => {
+    //     if (err) {
+    //         return handleError(err)
+    //     }
+    //     res.send(html)
+    //     if (!isProd) {
+    //         console.log(`whole request: ${Date.now() - s}ms`)
+    //     }
+    // })
+    //2:流式渲染 renderer.renderToStream
+    const stream=renderer.renderToStream(context);
+    let  html=''
+    stream.on('data', data => {
+        html += data.toString()
+    })
+    stream.on('end', () => {
+        res.send(html)// 渲染完成
         if (!isProd) {
             console.log(`whole request: ${Date.now() - s}ms`)
         }
     })
+    stream.on('error', err => {
+        handleError(err)
+    })
+
 }
 
 app.get('*', isProd ? render : (req, res) => {

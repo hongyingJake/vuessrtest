@@ -4,7 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 
-const isProd = process.env.NODE_ENV === 'production'
+const isProd = true //process.env.NODE_ENV === 'production'
 
 module.exports = {
   devtool: isProd
@@ -27,9 +27,10 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          compilerOptions: {
-            preserveWhitespace: false
-          }
+            extractCSS:isProd
+          // compilerOptions: {
+          //   preserveWhitespace: false
+          // }
         }
       },
       {
@@ -39,12 +40,11 @@ module.exports = {
       },
        {
             test: /\.css$/,
-            use: ['vue-style-loader','css-loader']
-           //ExtractTextPlugin 采用插件合并css样式在一个文件失败，有时间查看问题
-            // use: ExtractTextPlugin.extract({
-            //     fallback: 'vue-style-loader',
-            //     use: 'css-loader'
-            // })
+            use:isProd? ExtractTextPlugin.extract({
+                use: 'css-loader',
+                fallback: 'vue-style-loader'
+            })
+            :['vue-style-loader','css-loader']
         },
       {
         test: /\.(png|jpg|gif|svg)$/,
